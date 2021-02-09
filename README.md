@@ -1,16 +1,37 @@
-# DenseLD_Data
-Sample data used to demonstrate the application of DenseLD fine-mapping approach. 
+# Genetic Fine-mapping with Dense Linkage Disequilibrium Blocks (DenseLD)
+This is a genetic fine-mapping method incorporating dense LD block structure of linkage disequilibrum (LD) matrix among SNPS from a genomic region of interest.
 
+# Prerequisites
+MATLAB is required for the analysis.
+"denseLD.m" is a MATLAB function for dense block detection that originally from the "NICE.m" in a previous package https://github.com/shuochenstats/Network_program/tree/master/NICE_folder/NICE_detection. "denseLD.m" is a faster function than "NICE.m". 
+
+"denseLD.m" can be downloaded at https://github.com/cmomo/DenseLD_Data/blob/main. 
+
+Dense LD block detection can be performed either in MATLAB or called by R using function "dense_block" in the R package. 
+
+DenseLD also requires R (>= 3.5.0) and R packages genlasso, graphics, R.matlab and matlabr for the analysis. Install these packages before the analysis. 
+
+"denseLD_block.R" and "denseLD_order.R" are R functions can be used for DenseLD.
 
 # Implementation
+#### Import functions in R:
+source("denseLD_block.R")
+
+source("denseLD_order.R")
+
+#### Code for analysis of sample data
 "SampleAnalysis/DenseLD_demo.html" shows an example of performing fine-mapping using DenseLD with a simulated sample data.
 
+All sample data can be downloaded together from "data/data.zip". 
+
+### Steps
 The analysis consists of three may steps.
 
-### 1. Detection of Dense LD
+#### 1. Detection of Dense LD
 Note: an example conducted in MATLAB using function "denseLD.m" can be found in "SampleAnalysis/demo_mat.html".
-### 2. Convert dense LD block structure to graph object
-### 3. Perform causal variant selection by incorporting the graph object of LD matrix into fused-LASSO
+#### 2. Convert dense LD block structure to graph object
+#### 3. Perform causal variant selection by incorporting the graph object of LD matrix into fused-LASSO
+
 
 # Sample analysis display
 
