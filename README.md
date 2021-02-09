@@ -19,9 +19,7 @@ source("denseLD_block.R")
 
 source("denseLD_order.R")
 
-#### Code for analysis of sample data
-"SampleAnalysis/DenseLD_demo.html" shows an example of performing fine-mapping using DenseLD with a simulated sample data. 
-
+#### Data
 All sample data can be downloaded together from "data/data.zip". 
 
 "simu_geno.csv" is the simulated genotypes for simulation. "simu_ldmx.csv" is the LD matrix for simulated genotypes. 
@@ -36,10 +34,11 @@ Note: an example conducted in MATLAB using function "denseLD.m" can be found in 
 
 
 # Sample analysis display
+"SampleAnalysis/DenseLD_demo.html" shows an example of performing fine-mapping using DenseLD with a simulated sample data. 
 
-The sample analysis using DenseLD can be previewed with link: http://htmlpreview.github.io/?https://github.com/cmomo/DenseLD_Data/blob/main/SampleAnalysis/DenseLD_demo.html
+The sample analysis using DenseLD can be previewed with link: http://htmlpreview.github.io/?https://github.com/cmomo/DenseLD/blob/main/SampleAnalysis/DenseLD_demo.html
 
-The sample analysis for dense LD block structure detection using MATLAB can be previewed with link: http://htmlpreview.github.io/?https://github.com/cmomo/DenseLD_Data/blob/main/SampleAnalysis/demo_mat.html
+The sample analysis for dense LD block structure detection using MATLAB can be previewed with link: http://htmlpreview.github.io/?https://github.com/cmomo/DenseLD/blob/main/SampleAnalysis/demo_mat.html
 
 
 ### Plots generated during analysis are uploaded in folder "png". 
