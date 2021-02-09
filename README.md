@@ -22,7 +22,7 @@ source("denseLD_order.R")
 #### Data
 All sample data can be downloaded together from "data/data.zip". 
 
-"simu_geno.csv" is the simulated genotypes for simulation. "simu_ldmx.csv" is the LD matrix for simulated genotypes. 
+"simu_geno.csv" is the simulated genotypes for the simulation studies. "simu_ldmx.csv" is the LD matrix for simulated genotypes. 
 
 ### Steps
 The analysis consists of three may steps.
