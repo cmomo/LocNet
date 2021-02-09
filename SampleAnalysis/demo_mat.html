@@ -1,0 +1,2967 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>demo</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-02-08"><meta name="DC.source" content="demo.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Detect the dense LD block structure:</a></li></ul></div><pre class="codeinput"><span class="comment">% Set the directory where the LD matrix is saved:</span>
+addpath(<span class="string">'InputDataDirectory'</span>)
+<span class="comment">% Read in the LD matrix in CSV file (with headers but no rownames):</span>
+ldmx = csvread(<span class="string">"demo_ldmx.csv"</span>,1,0);
+
+<span class="comment">% Uncomment to convert the elements on the diagonal of the LD matrix to zero if not:</span>
+<span class="comment">% for i=1:size(ldmx,1) % convert diagonal of RNA matrix to 0.</span>
+<span class="comment">%     ldmx(i,i)=0;</span>
+<span class="comment">% end</span>
+
+<span class="comment">% Plot the LD matrix with the SNPs ordered by their physical positions:</span>
+figure;imagesc(ldmx);colormap <span class="string">jet</span>;colorbar;snapnow;
+</pre><img vspace="5" hspace="5" src="demo_01.png" alt=""> <h2 id="2">Detect the dense LD block structure:</h2><pre class="codeinput"><span class="comment">% Set the directory where the DenseLD function located:</span>
+addpath(<span class="string">'MatlabDenseLDFunctionDirectory'</span>)
+<span class="comment">% denseLD(nlogp,thresh,K_iter, k1,kn,leap,fig)</span>
+<span class="comment">% [Cindx,CID,Clist,K_final]=denseLD(squareform(ldmx), 0.5, 10, 1, 500, 10, 0);</span>
+<span class="comment">% warning off;</span>
+<span class="comment">% Error using eigs&gt;checkInputs (line 265)</span>
+<span class="comment">% Number of eigenvalues requested, k, must be a positive integer not greater than n = 466. Instead, it</span>
+<span class="comment">% was 471.</span>
+
+[Cindx,CID,Clist,K_final]=denseLD(squareform(ldmx), 0.5, 10, 1, 466, 10, 0);
+warning <span class="string">off</span>;
+
+figure;imagesc(ldmx(Clist,Clist));colormap <span class="string">jet</span>;colorbar;snapnow
+
+<span class="comment">% Set the directory where the results should be saved:</span>
+addpath(<span class="string">'DataSaveDirectory'</span>)
+save(<span class="string">'DenseLDmx.mat'</span>,<span class="string">'Clist'</span>,<span class="string">'CID'</span>,<span class="string">'Cindx'</span>)
+</pre><pre class="codeoutput">Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+     1
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    11
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    21
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    31
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    41
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    51
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    61
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    71
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    81
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    91
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   101
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   111
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   121
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   131
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   141
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   151
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   161
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   171
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   181
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   191
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   201
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   211
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   221
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   231
+
+
+K =
+
+   241
+
+
+K =
+
+   251
+
+
+K =
+
+   261
+
+
+K =
+
+   271
+
+
+K =
+
+   281
+
+
+K =
+
+   291
+
+
+K =
+
+   301
+
+
+K =
+
+   311
+
+
+K =
+
+   321
+
+
+K =
+
+   331
+
+
+K =
+
+   341
+
+
+K =
+
+   351
+
+
+K =
+
+   361
+
+
+K =
+
+   371
+
+
+K =
+
+   381
+
+
+K =
+
+   391
+
+
+K =
+
+   401
+
+
+K =
+
+   411
+
+
+K =
+
+   421
+
+
+K =
+
+   431
+
+
+K =
+
+   441
+
+
+K =
+
+   451
+
+
+K =
+
+   461
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+     1
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    11
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    21
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    31
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    41
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    51
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    61
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    71
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    81
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    91
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   101
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   111
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   121
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   131
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   141
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   151
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   161
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   171
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   181
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   191
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   201
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   211
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   221
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   231
+
+
+K =
+
+   241
+
+
+K =
+
+   251
+
+
+K =
+
+   261
+
+
+K =
+
+   271
+
+
+K =
+
+   281
+
+
+K =
+
+   291
+
+
+K =
+
+   301
+
+
+K =
+
+   311
+
+
+K =
+
+   321
+
+
+K =
+
+   331
+
+
+K =
+
+   341
+
+
+K =
+
+   351
+
+
+K =
+
+   361
+
+
+K =
+
+   371
+
+
+K =
+
+   381
+
+
+K =
+
+   391
+
+
+K =
+
+   401
+
+
+K =
+
+   411
+
+
+K =
+
+   421
+
+
+K =
+
+   431
+
+
+K =
+
+   441
+
+
+K =
+
+   451
+
+
+K =
+
+   461
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+     1
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    11
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    21
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    31
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    41
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    51
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    61
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    71
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    81
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    91
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   101
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   111
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   121
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   131
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   141
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   151
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   161
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   171
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   181
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   191
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   201
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   211
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   221
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   231
+
+
+K =
+
+   241
+
+
+K =
+
+   251
+
+
+K =
+
+   261
+
+
+K =
+
+   271
+
+
+K =
+
+   281
+
+
+K =
+
+   291
+
+
+K =
+
+   301
+
+
+K =
+
+   311
+
+
+K =
+
+   321
+
+
+K =
+
+   331
+
+
+K =
+
+   341
+
+
+K =
+
+   351
+
+
+K =
+
+   361
+
+
+K =
+
+   371
+
+
+K =
+
+   381
+
+
+K =
+
+   391
+
+
+K =
+
+   401
+
+
+K =
+
+   411
+
+
+K =
+
+   421
+
+
+K =
+
+   431
+
+
+K =
+
+   441
+
+
+K =
+
+   451
+
+
+K =
+
+   461
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+     1
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    11
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    21
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    31
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    41
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    51
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    61
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    71
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    81
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    91
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   101
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   111
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   121
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   131
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   141
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   151
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   161
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   171
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   181
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   191
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   201
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   211
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   221
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   231
+
+
+K =
+
+   241
+
+
+K =
+
+   251
+
+
+K =
+
+   261
+
+
+K =
+
+   271
+
+
+K =
+
+   281
+
+
+K =
+
+   291
+
+
+K =
+
+   301
+
+
+K =
+
+   311
+
+
+K =
+
+   321
+
+
+K =
+
+   331
+
+
+K =
+
+   341
+
+
+K =
+
+   351
+
+
+K =
+
+   361
+
+
+K =
+
+   371
+
+
+K =
+
+   381
+
+
+K =
+
+   391
+
+
+K =
+
+   401
+
+
+K =
+
+   411
+
+
+K =
+
+   421
+
+
+K =
+
+   431
+
+
+K =
+
+   441
+
+
+K =
+
+   451
+
+
+K =
+
+   461
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+     1
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    11
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    21
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    31
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    41
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    51
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    61
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    71
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    81
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    91
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   101
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   111
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   121
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   131
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   141
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   151
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   161
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   171
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   181
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   191
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   201
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   211
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   221
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   231
+
+
+K =
+
+   241
+
+
+K =
+
+   251
+
+
+K =
+
+   261
+
+
+K =
+
+   271
+
+
+K =
+
+   281
+
+
+K =
+
+   291
+
+
+K =
+
+   301
+
+
+K =
+
+   311
+
+
+K =
+
+   321
+
+
+K =
+
+   331
+
+
+K =
+
+   341
+
+
+K =
+
+   351
+
+
+K =
+
+   361
+
+
+K =
+
+   371
+
+
+K =
+
+   381
+
+
+K =
+
+   391
+
+
+K =
+
+   401
+
+
+K =
+
+   411
+
+
+K =
+
+   421
+
+
+K =
+
+   431
+
+
+K =
+
+   441
+
+
+K =
+
+   451
+
+
+K =
+
+   461
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+     1
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    11
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    21
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    31
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    41
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    51
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    61
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    71
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    81
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    91
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   101
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   111
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   121
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   131
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   141
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   151
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   161
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   171
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   181
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   191
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   201
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   211
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   221
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   231
+
+
+K =
+
+   241
+
+
+K =
+
+   251
+
+
+K =
+
+   261
+
+
+K =
+
+   271
+
+
+K =
+
+   281
+
+
+K =
+
+   291
+
+
+K =
+
+   301
+
+
+K =
+
+   311
+
+
+K =
+
+   321
+
+
+K =
+
+   331
+
+
+K =
+
+   341
+
+
+K =
+
+   351
+
+
+K =
+
+   361
+
+
+K =
+
+   371
+
+
+K =
+
+   381
+
+
+K =
+
+   391
+
+
+K =
+
+   401
+
+
+K =
+
+   411
+
+
+K =
+
+   421
+
+
+K =
+
+   431
+
+
+K =
+
+   441
+
+
+K =
+
+   451
+
+
+K =
+
+   461
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+     1
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    11
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    21
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    31
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    41
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    51
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    61
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    71
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    81
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    91
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   101
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   111
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   121
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   131
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   141
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   151
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   161
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   171
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   181
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   191
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   201
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   211
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   221
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   231
+
+
+K =
+
+   241
+
+
+K =
+
+   251
+
+
+K =
+
+   261
+
+
+K =
+
+   271
+
+
+K =
+
+   281
+
+
+K =
+
+   291
+
+
+K =
+
+   301
+
+
+K =
+
+   311
+
+
+K =
+
+   321
+
+
+K =
+
+   331
+
+
+K =
+
+   341
+
+
+K =
+
+   351
+
+
+K =
+
+   361
+
+
+K =
+
+   371
+
+
+K =
+
+   381
+
+
+K =
+
+   391
+
+
+K =
+
+   401
+
+
+K =
+
+   411
+
+
+K =
+
+   421
+
+
+K =
+
+   431
+
+
+K =
+
+   441
+
+
+K =
+
+   451
+
+
+K =
+
+   461
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+     1
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    11
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    21
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    31
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    41
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    51
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    61
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    71
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    81
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    91
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   101
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   111
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   121
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   131
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   141
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   151
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   161
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   171
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   181
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   191
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   201
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   211
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   221
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   231
+
+
+K =
+
+   241
+
+
+K =
+
+   251
+
+
+K =
+
+   261
+
+
+K =
+
+   271
+
+
+K =
+
+   281
+
+
+K =
+
+   291
+
+
+K =
+
+   301
+
+
+K =
+
+   311
+
+
+K =
+
+   321
+
+
+K =
+
+   331
+
+
+K =
+
+   341
+
+
+K =
+
+   351
+
+
+K =
+
+   361
+
+
+K =
+
+   371
+
+
+K =
+
+   381
+
+
+K =
+
+   391
+
+
+K =
+
+   401
+
+
+K =
+
+   411
+
+
+K =
+
+   421
+
+
+K =
+
+   431
+
+
+K =
+
+   441
+
+
+K =
+
+   451
+
+
+K =
+
+   461
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+     1
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    11
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    21
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    31
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    41
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    51
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    61
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    71
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    81
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    91
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   101
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   111
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   121
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   131
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   141
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   151
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   161
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   171
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   181
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   191
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   201
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   211
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   221
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   231
+
+
+K =
+
+   241
+
+
+K =
+
+   251
+
+
+K =
+
+   261
+
+
+K =
+
+   271
+
+
+K =
+
+   281
+
+
+K =
+
+   291
+
+
+K =
+
+   301
+
+
+K =
+
+   311
+
+
+K =
+
+   321
+
+
+K =
+
+   331
+
+
+K =
+
+   341
+
+
+K =
+
+   351
+
+
+K =
+
+   361
+
+
+K =
+
+   371
+
+
+K =
+
+   381
+
+
+K =
+
+   391
+
+
+K =
+
+   401
+
+
+K =
+
+   411
+
+
+K =
+
+   421
+
+
+K =
+
+   431
+
+
+K =
+
+   441
+
+
+K =
+
+   451
+
+
+K =
+
+   461
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+     1
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    11
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    21
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    31
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    41
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    51
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    61
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    71
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    81
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+    91
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   101
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   111
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   121
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   131
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   141
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   151
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   161
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   171
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   181
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   191
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   201
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   211
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   221
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+
+K =
+
+   231
+
+
+K =
+
+   241
+
+
+K =
+
+   251
+
+
+K =
+
+   261
+
+
+K =
+
+   271
+
+
+K =
+
+   281
+
+
+K =
+
+   291
+
+
+K =
+
+   301
+
+
+K =
+
+   311
+
+
+K =
+
+   321
+
+
+K =
+
+   331
+
+
+K =
+
+   341
+
+
+K =
+
+   351
+
+
+K =
+
+   361
+
+
+K =
+
+   371
+
+
+K =
+
+   381
+
+
+K =
+
+   391
+
+
+K =
+
+   401
+
+
+K =
+
+   411
+
+
+K =
+
+   421
+
+
+K =
+
+   431
+
+
+K =
+
+   441
+
+
+K =
+
+   451
+
+
+K =
+
+   461
+
+Warning: The shifted operator is close to singular or badly scaled. RCOND =
+3.128840e-19. Consider using a different value for sigma. 
+</pre><img vspace="5" hspace="5" src="demo_02.png" alt=""> <img vspace="5" hspace="5" src="demo_03.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% Set the directory where the LD matrix is saved:
+addpath('InputDataDirectory')
+% Read in the LD matrix in CSV file (with headers but no rownames):
+ldmx = csvread("demo_ldmx.csv",1,0);
+
+% Uncomment to convert the elements on the diagonal of the LD matrix to zero if not:
+% for i=1:size(ldmx,1) % convert diagonal of RNA matrix to 0. 
+%     ldmx(i,i)=0;
+% end
+
+% Plot the LD matrix with the SNPs ordered by their physical positions:
+figure;imagesc(ldmx);colormap jet;colorbar;snapnow;
+
+
+%% Detect the dense LD block structure:
+
+% Set the directory where the DenseLD function located:
+addpath('MatlabDenseLDFuctionDirectory')
+% denseLD(nlogp,thresh,K_iter, k1,kn,leap,fig)
+% [Cindx,CID,Clist,K_final]=denseLD(squareform(ldmx), 0.5, 10, 1, 500, 10, 0);
+% warning off;
+% Error using eigs>checkInputs (line 265)
+% Number of eigenvalues requested, k, must be a positive integer not greater than n = 466. Instead, it
+% was 471.
+
+[Cindx,CID,Clist,K_final]=denseLD(squareform(ldmx), 0.5, 10, 1, 466, 10, 0);
+warning off;
+
+figure;imagesc(ldmx(Clist,Clist));colormap jet;colorbar;snapnow
+
+% Set the directory where the results should be saved:
+addpath('DataSaveDirectory')
+save('DenseLDmx.mat','Clist','CID','Cindx')
+
+##### SOURCE END #####
+--></body></html>
