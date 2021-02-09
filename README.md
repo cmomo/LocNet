@@ -20,9 +20,11 @@ source("denseLD_block.R")
 source("denseLD_order.R")
 
 #### Code for analysis of sample data
-"SampleAnalysis/DenseLD_demo.html" shows an example of performing fine-mapping using DenseLD with a simulated sample data.
+"SampleAnalysis/DenseLD_demo.html" shows an example of performing fine-mapping using DenseLD with a simulated sample data. 
 
 All sample data can be downloaded together from "data/data.zip". 
+
+"simu_geno.csv" is the simulated genotypes for simulation. "simu_ldmx.csv" is the LD matrix for simulated genotypes. 
 
 ### Steps
 The analysis consists of three may steps.
@@ -47,4 +49,4 @@ The sample analysis for dense LD block structure detection using MATLAB can be p
 
 "Trend plot of beta by lambda-1" shows the trend of beta shrinkage using DenseLD fine-mapping approach (i.e., fused-LASSO incorporating dense LD block structure).
 
-Sine one of the SNPs produced extreme values when fitting by the regression model, we generated a plot, "Trend plot of beta by lambda (remove extreme beta)-1", to remove the extreme SNPs in order to better display the trend of the other SNPs. 
+Since one of the SNPs produced extreme values when fitting by the regression model, we generated a plot, "Trend plot of beta by lambda (remove extreme beta)-1", to remove the extreme SNPs in order to better display the trend of the other SNPs. 
