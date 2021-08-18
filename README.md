@@ -31,6 +31,10 @@ Note: an example conducted in MATLAB using function "denseLD.m" can be found in 
 # Data
 All sample data can be downloaded together from "data/data.zip". 
 
+"GWAS summary statistics_CPD.csv" is the GWAS summary statistics generated from raw data in this study.
+
+"LDmatrix_chr15_78700Kto79230K_r2.zip" is the matrix of linkage disequilibrium scores estimated for the SNPs used in this study. 
+
 "simu_geno.csv" is the simulated genotypes for the simulation studies. "simu_ldmx.csv" is the LD matrix for simulated genotypes. 
 
 
