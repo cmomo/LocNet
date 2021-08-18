@@ -29,7 +29,7 @@ Note: an example conducted in MATLAB using function "denseLD.m" can be found in 
 
 
 # Data
-All sample data can be downloaded together from "data/data.zip". 
+Datasets for analysis demonstration using a small sample data can be downloaded together from "data/data.zip". 
 
 "GWAS summary statistics_CPD.csv" is the GWAS summary statistics generated from raw data in this study.
 
