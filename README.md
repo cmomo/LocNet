@@ -29,7 +29,8 @@ Note: an example conducted in MATLAB using function "denseLD.m" can be found in 
 
 
 # Data
-Datasets for analysis demonstration using a small sample data can be downloaded together from "data/data.zip". 
+
+Raw genetic and phenotypic data are available in the UK Biobank (https://www.ukbiobank.ac.uk/). Qualified reseachers can access the data through UKB online database upon permission approval from the UKB. 
 
 "GWAS summary statistics_CPD.csv" is the GWAS summary statistics generated from raw data in this study.
 
@@ -37,6 +38,7 @@ Datasets for analysis demonstration using a small sample data can be downloaded 
 
 "simu_geno.csv" is the simulated genotypes for the simulation studies. "simu_ldmx.csv" is the LD matrix for simulated genotypes. 
 
+Datasets for analysis demonstration using a small sample data can be downloaded together from "data/data.zip". 
 
 # Sample analysis display
 "SampleAnalysis/DenseLD_demo.html" shows an example of performing fine-mapping using DenseLD with a simulated sample data. 
