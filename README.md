@@ -1,5 +1,5 @@
 # LocNet: an intermediate step to prioritize genetic variants between GWAS and fine-mapping 
-This is a method incorporating dense linkage disequilibrium block structure of SNPs for prioritizing a set of genetic variants using GWAS summary statisticis before performing fine-mapping. 
+This method incorporates dense linkage disequilibrium block structure of SNPs for prioritizing a set of genetic variants using GWAS summary statisticis before performing fine-mapping. 
 
 # Prerequisites
 MATLAB is required for the analysis.
