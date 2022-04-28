@@ -41,7 +41,7 @@ Raw genetic and phenotypic data are available in the UK Biobank (https://www.ukb
 Datasets for analysis demonstration using a small sample data can be downloaded together from "data/data.zip". 
 
 # Sample analysis display
-"SampleAnalysis/LocNet_demo.html" shows an example of applying LocNet method to a simulated sample data. 
+"SampleAnalysis/DenseLD_demo.html" shows an example of applying LocNet method to prioritize a set of genetic variants with dense LD structure based on a simulated sample data. 
 
 The sample analysis using LocNet can be previewed with link: http://htmlpreview.github.io/?https://github.com/cmomo/DenseLD/blob/main/SampleAnalysis/DenseLD_demo.html
 
