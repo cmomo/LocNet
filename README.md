@@ -1,5 +1,5 @@
-# Genetic Fine-mapping with Dense Linkage Disequilibrium Blocks (DenseLD)
-This is a genetic fine-mapping method incorporating dense LD block structure of linkage disequilibrum (LD) matrix among SNPS from a genomic region of interest.
+# LocNet: an intermediate step to prioritize genetic variants between GWAS and fine-mapping 
+This is a method incorporating dense linkage disequilibrium block structure of SNPs for prioritizing a set of genetic variants using GWAS summary statisticis before performing fine-mapping. 
 
 # Prerequisites
 MATLAB is required for the analysis.
@@ -22,7 +22,7 @@ source("denseLD_order.R")
 ### Steps
 The analysis consists of three may steps.
 
-#### 1. Detection of Dense LD
+#### 1. Detection of dense LD blocks
 Note: an example conducted in MATLAB using function "denseLD.m" can be found in "SampleAnalysis/demo_mat.html".
 #### 2. Convert dense LD block structure to graph object
 #### 3. Perform causal variant selection by incorporting the graph object of LD matrix into fused-LASSO
@@ -41,9 +41,9 @@ Raw genetic and phenotypic data are available in the UK Biobank (https://www.ukb
 Datasets for analysis demonstration using a small sample data can be downloaded together from "data/data.zip". 
 
 # Sample analysis display
-"SampleAnalysis/DenseLD_demo.html" shows an example of performing fine-mapping using DenseLD with a simulated sample data. 
+"SampleAnalysis/LocNet_demo.html" shows an example of applying LocNet method to a simulated sample data. 
 
-The sample analysis using DenseLD can be previewed with link: http://htmlpreview.github.io/?https://github.com/cmomo/DenseLD/blob/main/SampleAnalysis/DenseLD_demo.html
+The sample analysis using LocNet can be previewed with link: http://htmlpreview.github.io/?https://github.com/cmomo/DenseLD/blob/main/SampleAnalysis/DenseLD_demo.html
 
 The sample analysis for dense LD block structure detection using MATLAB can be previewed with link: http://htmlpreview.github.io/?https://github.com/cmomo/DenseLD/blob/main/SampleAnalysis/demo_mat.html
 
