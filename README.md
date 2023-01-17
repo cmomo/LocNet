@@ -25,7 +25,7 @@ The analysis consists of three may steps.
 #### 1. Detection of dense LD blocks
 Note: an example conducted in MATLAB using function "denseLD.m" can be found in "SampleAnalysis/demo_mat.html".
 #### 2. Convert dense LD block structure to graph object
-#### 3. Perform causal variant selection by incorporting the graph object of LD matrix into fused-LASSO
+#### 3. Prioritize causal variants by incorporting the graph object of LD matrix into fused-LASSO
 
 
 # Data
